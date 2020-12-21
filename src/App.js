@@ -1,5 +1,7 @@
+import { grommet, Grommet } from 'grommet';
 import { useRef, useState, useEffect } from 'react';
 import './App.css';
+import Login from './Components/Login';
 
 const sentence = [
   "Sometimes I'll start a sentence and I don't even know where it's going. I just hope I find it along the way.",
@@ -15,6 +17,8 @@ export function App() {
     endTime: null,
     timeDifference: null
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState({ username: '' })
   const [sentenceArray, setSentenceArray] = useState([]);
   const [typedWord, setTypedWord] = useState("");
   const [currentWord, setCurrentWord] = useState(0);
@@ -88,55 +92,67 @@ export function App() {
     setIsStarted(false);
   };
 
+  if (!isLoggedIn) {
+    return (
+      <Login
+        user={user}
+        setIsLoggedIn={setIsLoggedIn}
+        setUser={setUser}
+      />
+    )
+  }
+
   return (
-    <div className="App">
-      <h1>Test your Typing Speed</h1>
-      {isStarted && <p>Start typing now!</p>}
-      <div className="textArea">
-        {sentenceArray.map((word, wordIndex) => (
-          <span
-            key={wordIndex}
-            className={wordIndex < currentWord ? "correct" : ""}
-          >
-            {word.map((letter, letterIndex) => (
-              <span
-                key={letterIndex}
-                className={
-                  wordIndex === currentWord
-                    ? correctLettersArray[letterIndex]
+    <Grommet theme={grommet}>
+      <div className="App">
+        <h1>Test your Typing Speed</h1>
+        {isStarted && <p>Start typing now!</p>}
+        <div className="textArea">
+          {sentenceArray.map((word, wordIndex) => (
+            <span
+              key={wordIndex}
+              className={wordIndex < currentWord ? "correct" : ""}
+            >
+              {word.map((letter, letterIndex) => (
+                <span
+                  key={letterIndex}
+                  className={
+                    wordIndex === currentWord
                       ? correctLettersArray[letterIndex]
-                      : letterIndex === correctLettersArray.length
-                        ? "currentLetter"
-                        : ""
-                    : ""
-                }
-              >
-                {letter}
-              </span>
-            ))}
-          </span>
-        ))}
-      </div>
-      <div>
-        <input
-          id="textInput"
-          type="text"
-          ref={textInputRef}
-          value={typedWord}
-          onChange={(e) => newLetter(e)}
-          style={{ width: "0", opacity: "0" }}
-        />
-      </div>
-      {!isStarted && (
-        <button onClick={() => startTest()} className="startButton">
-          Start
-        </button>
-      )}
-      <button onClick={() => refreshTest()} className="startButton">
-        Refresh
+                        ? correctLettersArray[letterIndex]
+                        : letterIndex === correctLettersArray.length
+                          ? "currentLetter"
+                          : ""
+                      : ""
+                  }
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+          ))}
+        </div>
+        <div>
+          <input
+            id="textInput"
+            type="text"
+            ref={textInputRef}
+            value={typedWord}
+            onChange={(e) => newLetter(e)}
+            style={{ width: "0", opacity: "0" }}
+          />
+        </div>
+        {!isStarted && (
+          <button onClick={() => startTest()} className="startButton">
+            Start
+          </button>
+        )}
+        <button onClick={() => refreshTest()} className="startButton">
+          Refresh
       </button>
-      {result && <h1>{`${result} WPM`}</h1>}
-    </div>
+        {result && <h1>{`${result} WPM`}</h1>}
+      </div>
+    </Grommet>
   );
 }
 
