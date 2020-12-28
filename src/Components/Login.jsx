@@ -2,19 +2,25 @@ import { Box, Button, Card, CardBody, grommet, Grommet, TextInput } from 'gromme
 import { User } from 'grommet-icons';
 import { useEffect } from 'react';
 
-function Login({ user, setUser, setIsLoggedIn }) {
+function Login({ user, setUser, setIsLoggedIn, socketRef }) {
     //Enabling Enter to submit
     useEffect(() => {
         const listener = event => {
             if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-                setIsLoggedIn(true)
+                loginUser();
             }
         }
-        document.addEventListener('keydown', listener)
+        document.addEventListener('keydown', listener);
         return () => {
-            document.removeEventListener('keydown', listener)
+            document.removeEventListener('keydown', listener);
         }
     })
+
+    const loginUser = () => {
+        console.log('reached');
+        socketRef.current.emit('login', user.username)
+        setIsLoggedIn(true);
+    }
 
     return (
         <Grommet theme={grommet}>
@@ -49,7 +55,7 @@ function Login({ user, setUser, setIsLoggedIn }) {
                         <Button
                             primary
                             size="medium"
-                            onClick={() => setIsLoggedIn(true)}
+                            onClick={() => loginUser()}
                             label="Login"
                         >
                         </Button>
@@ -60,4 +66,4 @@ function Login({ user, setUser, setIsLoggedIn }) {
     )
 }
 
-export default Login
+export default Login;

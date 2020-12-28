@@ -2,6 +2,7 @@ import { grommet, Grommet } from 'grommet';
 import { useRef, useState, useEffect } from 'react';
 import './App.css';
 import Login from './Components/Login';
+import io from 'socket.io-client';
 
 const sentence = [
   "Sometimes I'll start a sentence and I don't even know where it's going. I just hope I find it along the way.",
@@ -10,6 +11,7 @@ const sentence = [
   "Identity theft is not a joke, Jim! Millions of families suffer every year.",
   "If I were buying my coffin, I would get one with thicker walls so you couldn't hear the other dead people."
 ];
+
 export function App() {
   const textInputRef = useRef(null);
   const times = useRef({
@@ -17,6 +19,7 @@ export function App() {
     endTime: null,
     timeDifference: null
   });
+  const socketRef = useRef();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ username: '' })
   const [sentenceArray, setSentenceArray] = useState([]);
@@ -28,6 +31,10 @@ export function App() {
 
   useEffect(() => {
     getRandomSentence();
+
+    socketRef.current = io('http://localhost:3001', {
+      transports: ['websocket'],
+    });
   }, []);
 
   const getRandomSentence = () => {
@@ -38,7 +45,6 @@ export function App() {
     for (let i = 0; i < tempArray.length - 1; i++) {
       tempArray[i].push(" ");
     }
-    console.log(tempArray);
     setSentenceArray(tempArray);
   };
 
@@ -98,6 +104,7 @@ export function App() {
         user={user}
         setIsLoggedIn={setIsLoggedIn}
         setUser={setUser}
+        socketRef={socketRef}
       />
     )
   }
