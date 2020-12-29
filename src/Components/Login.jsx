@@ -17,7 +17,6 @@ function Login({ user, setUser, setIsLoggedIn, socketRef }) {
     })
 
     const loginUser = () => {
-        console.log('reached');
         socketRef.current.emit('login', user.username)
         setIsLoggedIn(true);
     }
